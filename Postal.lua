@@ -137,10 +137,6 @@ function Postal:OnInitialize()
 --	if Postal.WOWRetail then DEFAULT_CHAT_FRAME:AddMessage("LE_EXPANSION_11_0", 0.0, 0.69, 0.94) end
 	-- Version number
 	if not self.version then self.version = GetAddOnMetadataSafe("Postal", "Version") end
-	if Postal.WOWBCClassic then
-		local playerName = UnitName("player") or "Player"
-		self:Print(("Hello %s. Postal %s for TBC is now loaded. Please report any errors or suggestions."):format(playerName, self.version or ""))
-	end
 
 	-- Initialize database
 	local EnableDefault = false
@@ -157,6 +153,11 @@ function Postal:OnInitialize()
 	self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileChanged")
 	self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileChanged")
 	self.db.RegisterCallback(self, "OnProfileReset", "OnProfileChanged")
+
+	if Postal.WOWBCClassic then
+		local playerName = UnitName("player") or "Player"
+		self:Print(("Hello %s. Postal %s for TBC is now loaded. Please report any errors or suggestions."):format(playerName, self.version or ""))
+	end
 
 	-- Enable/disable modules based on saved settings
 	for name, module in self:IterateModules() do
