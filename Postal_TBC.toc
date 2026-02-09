@@ -1,10 +1,10 @@
 ## Interface: 20505
 ## Title: Postal
-## Version: v4.3.7
-## X-Build: 666
+## Version: v4.3.8
+## X-Build: 667
 ## X-ReleaseDate: 2026-02-09T00:00:00Z
-## X-Revision: 666
-## Author: Xinhuan
+## X-Revision: 667
+## Author: paradosi@Dreamscythe
 ## X-Credits: Ammo, Rabbit, Grennon, Mikk, oscarucb, Jonny aka The_Original_Manbot
 ## X-Category: Mail
 ## Notes: Postal: Enhanced Mailbox support

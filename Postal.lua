@@ -137,6 +137,10 @@ function Postal:OnInitialize()
 --	if Postal.WOWRetail then DEFAULT_CHAT_FRAME:AddMessage("LE_EXPANSION_11_0", 0.0, 0.69, 0.94) end
 	-- Version number
 	if not self.version then self.version = GetAddOnMetadataSafe("Postal", "Version") end
+	if Postal.WOWBCClassic then
+		local playerName = UnitName("player") or "Player"
+		self:Print(("Hello %s. Postal %s for TBC is now loaded. Please report any errors or suggestions."):format(playerName, self.version or ""))
+	end
 
 	-- Initialize database
 	local EnableDefault = false
@@ -592,7 +596,8 @@ function Postal.About()
 	tinsert(t, "-----")
 	tinsert(t, L["Please post bugs or suggestions at |cFF00FFFFhttps://github.com/paradosi/postal_tbc_anniversary/issues|r. When posting bugs, indicate your locale and Postal's version number v%s."]:format(version))
 	tinsert(t, "")
-	tinsert(t, "- Xinhuan (Blackrock/Barthilas US Alliance)")
+	tinsert(t, "GitHub: |cFF00FFFFhttps://github.com/paradosi/postal_tbc_anniversary|r")
+	tinsert(t, "- paradosi@Dreamscythe")
 	tinsert(t, "")
 	Postal.aboutFrame.editBox:SetText(table.concat(t, "\n"))
 	Postal.aboutFrame:Show()

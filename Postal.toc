@@ -4,7 +4,7 @@
 ## X-Build: 663
 ## X-ReleaseDate: 2025-10-29T20:49:10Z
 ## X-Revision: 663
-## Author: Xinhuan
+## Author: paradosi@Dreamscythe
 ## X-Credits: Ammo, Rabbit, Grennon, Mikk, oscarucb, Jonny aka The_Original_Manbot
 ## X-Category: Mail
 ## IconTexture: 133457

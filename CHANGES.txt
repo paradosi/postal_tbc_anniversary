@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------
+r667 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 4 lines
+Changed paths:
+   M /trunk/Postal.lua
+   M /trunk/Localization.lua
+   M /trunk/Postal_TBC.toc
+   M /trunk/Postal_*.toc
+
+Update author, add TBC welcome message, and include GitHub link in help text.
+------------------------------------------------------------------------
 r666 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 2 lines
 Changed paths:
    M /trunk/Modules/Express.lua
