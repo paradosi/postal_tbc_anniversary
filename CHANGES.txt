@@ -1,0 +1,15 @@
+------------------------------------------------------------------------
+r664 | Jim | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 3 lines
+Changed paths:
+   M /trunk/Postal_TBC.toc
+   M /trunk/Postal.lua
+   M /trunk/Modules/TradeBlock.lua
+
+TBC Anniversary interface update, add AddOn metadata fallback for Classic, and clean up TradeBlock addon check.
+------------------------------------------------------------------------
+r663 | Zimzarina | 2025-10-29 20:49:10 +0000 (Wed, 29 Oct 2025) | 1 line
+Changed paths:
+   M /trunk/Postal_Mists.toc
+
+TOC Update MOP.
+------------------------------------------------------------------------
