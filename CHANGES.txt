@@ -1,4 +1,11 @@
 ------------------------------------------------------------------------
+r666 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 2 lines
+Changed paths:
+   M /trunk/Modules/Express.lua
+   M /trunk/Postal_TBC.toc
+
+Fix Express module container API calls for Classic.
+------------------------------------------------------------------------
 r665 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 4 lines
 Changed paths:
    M /trunk/Modules/OpenAll.lua

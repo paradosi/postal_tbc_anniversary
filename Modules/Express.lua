@@ -6,6 +6,29 @@ Postal_Express.description2 = L[ [[|cFFFFCC00*|r Shift-Click to take item/money 
 |cFFFFCC00*|r Ctrl-Click to return mail.
 |cFFFFCC00*|r Alt-Click to move an item from your inventory to the current outgoing mail (same as right click in default UI).]] ]
 
+local GetContainerNumSlotsSafe = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
+local GetContainerItemIDSafe = (C_Container and C_Container.GetContainerItemID) or GetContainerItemID
+local PickupContainerItemSafe = (C_Container and C_Container.PickupContainerItem) or PickupContainerItem
+local GetContainerItemInfoSafe = C_Container and C_Container.GetContainerItemInfo or nil
+local GetContainerItemInfoLegacy = GetContainerItemInfo
+
+local function GetContainerItemInfoCompat(bag, slot)
+	if GetContainerItemInfoSafe then
+		return GetContainerItemInfoSafe(bag, slot)
+	end
+	if GetContainerItemInfoLegacy then
+		local texture, count, locked, _, _, _, link, _, _, itemID = GetContainerItemInfoLegacy(bag, slot)
+		return {
+			iconFileID = texture,
+			stackCount = count,
+			isLocked = locked,
+			hyperlink = link,
+			itemID = itemID,
+		}
+	end
+	return nil
+end
+
 local _G = getfenv(0)
 
 -- WoW 10.0 Release Show/Hide Frame Handlers
@@ -155,25 +178,10 @@ end
 
 function Postal_Express:ContainerFrameItemButtonOnModifiedClick(bag, slot, button)
 	if button == "LeftButton" and IsAltKeyDown() and SendMailFrame:IsVisible() and not CursorHasItem() then
-		local texture, count
-		if Postal.WOWBCClassic then
-			texture = select(1, GetContainerItemInfo(bag, slot))
-			count = select(2, GetContainerItemInfo(bag, slot))
-		else
-			if C_Container and C_Container.GetContainerItemInfo(bag, slot) then
-				local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
-				texture = itemInfo.iconFileID
-				count = itemInfo.stackCount
-			else
-				texture = 0
-				count = 0
-			end
-		end
-		if Postal.WOWBCClassic then
-			PickupContainerItem(bag, slot)
-		else
-			C_Container.PickupContainerItem(bag, slot)
-		end
+		local itemInfo = GetContainerItemInfoCompat(bag, slot)
+		local texture = itemInfo and itemInfo.iconFileID or 0
+		local count = itemInfo and itemInfo.stackCount or 0
+		PickupContainerItemSafe(bag, slot)
 		ClickSendMailItemButton()
 		if Postal.db.profile.Express.AutoSend then
 			for i = 1, ATTACHMENTS_MAX_SEND do
@@ -185,24 +193,10 @@ function Postal_Express:ContainerFrameItemButtonOnModifiedClick(bag, slot, butto
 			end
 		end
 	elseif button == "LeftButton" and IsControlKeyDown() and SendMailFrame:IsVisible() and not CursorHasItem() then
-		local itemid
-		if Postal.WOWBCClassic then
-			itemid = GetContainerItemID(bag, slot)
-		else
-			itemid = C_Container.GetContainerItemID(bag, slot)
-		end
+		local itemid = GetContainerItemIDSafe(bag, slot)
 		if not itemid then return end
-		local itemlocked
-		if Postal.WOWBCClassic then
-			itemlocked = select(3, GetContainerItemInfo(bag,slot))
-		else
-			if C_Container and C_Container.GetContainerItemInfo(bag,slot) then
-				local itemInfo = C_Container.GetContainerItemInfo(bag,slot)
-				itemlocked = itemInfo.isLocked
-			else
-				itemlocked = false
-			end
-		end
+		local itemInfo = GetContainerItemInfoCompat(bag, slot)
+		local itemlocked = itemInfo and itemInfo.isLocked or false
 		local itemq, _,_, itemc, itemsc, _, itemes = select(3,C_Item.GetItemInfo(itemid))
 		itemes = itemes and #itemes > 0
 		if Postal.db.profile.Express.BulkSend and itemq and itemc then
@@ -219,30 +213,11 @@ function Postal_Express:ContainerFrameItemButtonOnModifiedClick(bag, slot, butto
 					bmax = bmax + NUM_REAGENTBAG_FRAMES
 				end
 				for b = 0,bmax do
-					local numberOfSlots
-					if Postal.WOWBCClassic then
-						numberOfSlots = GetContainerNumSlots(b)
-					else
-						numberOfSlots = C_Container.GetContainerNumSlots(b)
-					end
+					local numberOfSlots = GetContainerNumSlotsSafe(b)
 					for s = 1, numberOfSlots do
-						local tid
-						if Postal.WOWBCClassic then
-							tid = GetContainerItemID(b, s)
-						else
-							tid = C_Container.GetContainerItemID(b, s)
-						end
-						local itemlocked2
-						if Postal.WOWBCClassic then
-							itemlocked2 = select(3, GetContainerItemInfo(b,s))
-						else
-							if C_Container and C_Container.GetContainerItemInfo(b,s) then
-								local itemInfo = C_Container.GetContainerItemInfo(b,s)
-								itemlocked2 = itemInfo.isLocked
-							else
-								itemlocked2 = false
-							end
-						end
+						local tid = GetContainerItemIDSafe(b, s)
+						local itemInfo2 = GetContainerItemInfoCompat(b, s)
+						local itemlocked2 = itemInfo2 and itemInfo2.isLocked or false
 						if not tid or itemlocked2 or Postal_Express_IsSoulbound(b, s) then
 							-- item locked, already attached, soulbound
 						else
@@ -258,23 +233,10 @@ function Postal_Express:ContainerFrameItemButtonOnModifiedClick(bag, slot, butto
 							or (pass == 4 and tq == itemq)   -- same quality
 							then
 								ClearCursor()
-								if Postal.WOWBCClassic then
-									PickupContainerItem(b, s)
-								else
-									C_Container.PickupContainerItem(b, s)
-								end
+								PickupContainerItemSafe(b, s)
 								ClickSendMailItemButton()
-								local itemlocked3
-								if Postal.WOWBCClassic then
-									itemlocked3 = select(3, GetContainerItemInfo(b,s))
-								else
-									if C_Container and C_Container.GetContainerItemInfo(b,s) then
-										local itemInfo = C_Container.GetContainerItemInfo(b,s)
-										itemlocked3 = itemInfo.isLocked
-									else
-										itemlocked3 = false
-									end
-								end
+								local itemInfo3 = GetContainerItemInfoCompat(b, s)
+								local itemlocked3 = itemInfo3 and itemInfo3.isLocked or false
 								if itemlocked3 then -- now locked => added
 									added = added + 1
 									itemsinmail = itemsinmail + 1
