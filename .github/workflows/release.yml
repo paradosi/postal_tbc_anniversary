@@ -1,0 +1,28 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build zip
+        run: |
+          mkdir -p dist/Postal
+          rsync -a --exclude '.git' --exclude '.github' --exclude 'dist' ./ dist/Postal/
+          (cd dist && zip -r Postal_TBC_Anniversary.zip Postal)
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Postal_TBC_Anniversary.zip
