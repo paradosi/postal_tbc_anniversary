@@ -4,6 +4,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("Postal")
 Postal_QuickAttach.description = L["Allows you to quickly attach different trade items types to a mail."]
 Postal_QuickAttach.description2 = L[ [[|cFFFFCC00*|r A default recipient name can be specified by right clicking on a button.
 |cFFFFCC00*|r Which bags are used by this feature can be set in the main menu.]] ]
+local GetContainerNumSlotsSafe = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
+local GetContainerItemInfoSafe = C_Container and C_Container.GetContainerItemInfo or nil
+local PickupContainerItemSafe = (C_Container and C_Container.PickupContainerItem) or PickupContainerItem
 -- Trade Goods supported itemType for C_Item.GetItemInfo() by WoW release version
 -- Classic: Trade Goods(0), Reagent(5, 0)
 -- BCC: Cloth(5), Leather(6), Metal & Stone(7), Meat(8), Herb(9), Enchanting(12), Jewelcrafting(4), Parts(1), Elemental(10), Devices(3), Explosives(2), Materials(13), Other(11)
@@ -194,6 +197,7 @@ end
 -- Attach as many items as possible of the specified type to the current send mail.
 function Postal_QuickAttachLeftButtonClick(classID, subclassID)
 	local bagID, bindType, itemclassID, itemID, itemsubclassID, locked, numberOfSlots, slot, slotIndex
+	local itemInfoCache = {}
 	local name = Postal_QuickAttachGetQAButtonCharName(classID, subclassID)
 	if name ~= "" then
 		SendMailNameEditBox:SetText(name)
@@ -211,17 +215,13 @@ function Postal_QuickAttachLeftButtonClick(classID, subclassID)
 			(bagID == 4) and Postal.db.profile.QuickAttach.EnableBag4 or
 			(bagID == 5) and Postal.db.profile.QuickAttach.EnableBag5
 		then
-			if Postal.WOWBCClassic then
-				numberOfSlots = GetContainerNumSlots(bagID)
-			else
-				numberOfSlots = C_Container.GetContainerNumSlots(bagID)
-			end
+			numberOfSlots = GetContainerNumSlotsSafe(bagID)
 			for slotIndex = 1, numberOfSlots, 1 do
 				if Postal.WOWBCClassic then
 					locked = select(3, GetContainerItemInfo(bagID, slotIndex))
 				else
-					if C_Container and C_Container.GetContainerItemInfo(bagID, slotIndex) then
-						local itemInfo = C_Container.GetContainerItemInfo(bagID, slotIndex)
+					if GetContainerItemInfoSafe and GetContainerItemInfoSafe(bagID, slotIndex) then
+						local itemInfo = GetContainerItemInfoSafe(bagID, slotIndex)
 						locked = itemInfo.isLocked
 					else
 						locked = false
@@ -231,26 +231,26 @@ function Postal_QuickAttachLeftButtonClick(classID, subclassID)
 					if Postal.WOWBCClassic then
 						itemID = select(10, GetContainerItemInfo(bagID, slotIndex))
 					else
-						if C_Container and C_Container.GetContainerItemInfo(bagID, slotIndex) then
-							local itemInfo = C_Container.GetContainerItemInfo(bagID, slotIndex)
+						if GetContainerItemInfoSafe and GetContainerItemInfoSafe(bagID, slotIndex) then
+							local itemInfo = GetContainerItemInfoSafe(bagID, slotIndex)
 							itemID = itemInfo.itemID
 						else
 							itemID = nil
 						end
 					end
 					if itemID then
-						bindType = select(14, C_Item.GetItemInfo(itemID))
-						if bindType ~= 	LE_ITEM_BIND_ON_ACQUIRE then
-							itemclassID = select(12, C_Item.GetItemInfo(itemID))
+						if not itemInfoCache[itemID] then
+							itemInfoCache[itemID] = {C_Item.GetItemInfo(itemID)}
+						end
+						local info = itemInfoCache[itemID]
+						bindType = info[14]
+						if bindType ~= LE_ITEM_BIND_ON_ACQUIRE then
+							itemclassID = info[12]
 							if itemclassID == classID then
-								itemsubclassID = select(13, C_Item.GetItemInfo(itemID))
+								itemsubclassID = info[13]
 								if itemsubclassID == subclassID or subclassID == -1 then
 										if SendMailNumberOfFreeSlots() > 0 then
-											if Postal.WOWBCClassic then
-												PickupContainerItem(bagID, slotIndex)
-											else
-												C_Container.PickupContainerItem(bagID, slotIndex)
-											end
+											PickupContainerItemSafe(bagID, slotIndex)
 											ClickSendMailItemButton()
 									end
 								end
@@ -311,6 +311,12 @@ local function Postal_QuickAttachSetQAButtonCharName(name, classID, subclassID)
 end
 
 -- Define static popup for default character name dialog.
+local quickAttachGuildPopup = StaticPopupDialogs["SET_GUILDPLAYERNOTE"] or {}
+local function QuickAttachDefaultPopupEscape(self)
+	local parent = self:GetParent()
+	if parent then parent:Hide() end
+end
+
 StaticPopupDialogs["POSTAL_QUICKATTACH_CHARACTER_NAME"] = {
 	text = L["Default recipient:"],
 	button1 = ACCEPT,
@@ -329,7 +335,7 @@ StaticPopupDialogs["POSTAL_QUICKATTACH_CHARACTER_NAME"] = {
 		StaticPopup1EditBox:HighlightText()
 		StaticPopup1EditBox:SetFocus()
 	end,
-	OnHide = StaticPopupDialogs["SET_GUILDPLAYERNOTE"].OnHide,
+	OnHide = quickAttachGuildPopup.OnHide or function() end,
 	EditBoxOnEnterPressed = function(self)
 		local parent = self:GetParent()
 		local name, classID, subclassID = strsplit("|", QAButtonDialogInfo)
@@ -337,7 +343,7 @@ StaticPopupDialogs["POSTAL_QUICKATTACH_CHARACTER_NAME"] = {
 		Postal_QuickAttachSetQAButtonCharName(name, classID, subclassID)	
 		parent:Hide()
 	end,
-	EditBoxOnEscapePressed = StaticPopupDialogs["SET_GUILDPLAYERNOTE"].EditBoxOnEscapePressed,
+	EditBoxOnEscapePressed = quickAttachGuildPopup.EditBoxOnEscapePressed or QuickAttachDefaultPopupEscape,
 	timeout = 0,
 	exclusive = 1,
 	whileDead = 1,

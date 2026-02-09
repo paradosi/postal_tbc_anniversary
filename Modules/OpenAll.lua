@@ -11,6 +11,9 @@ Postal_OpenAll.description2 = L[ [[|cFFFFCC00*|r Simple filters are available fo
 -- luacheck: globals InboxFrame
 
 local MAX_MAIL_SHOWN = 100
+local GetContainerNumFreeSlotsSafe = (C_Container and C_Container.GetContainerNumFreeSlots) or GetContainerNumFreeSlots
+local GetContainerNumSlotsSafe = (C_Container and C_Container.GetContainerNumSlots) or GetContainerNumSlots
+local GetContainerItemInfoSafe = C_Container and C_Container.GetContainerItemInfo or nil
 local mailIndex, attachIndex
 local numUnshownItems
 local lastItem, lastNumAttach, lastNumGold
@@ -283,8 +286,7 @@ function Postal_OpenAll:ProcessNext()
 --				if Postal.WOWBCClassic then
 --					bagFree, bagFam = GetContainerNumFreeSlots(bag)
 --				else
-					bagFree, bagFam = C_Container.GetContainerNumFreeSlots(bag)
---				end
+				bagFree, bagFam = GetContainerNumFreeSlotsSafe(bag)
 				if bagFam==0 then
 					free = free + bagFree
 				end
@@ -307,20 +309,15 @@ function Postal_OpenAll:ProcessNext()
 			local stackSize = select(8, C_Item.GetItemInfo(link))
 			if itemID and stackSize and C_Item.GetItemCount(itemID) > 0 then
 				for bag = 0, NUM_BAG_SLOTS do
-					local ContainerNumSlots
-					if Postal.WOWBCClassic then
-						ContainerNumSlots = GetContainerNumSlots(bag)
-					else
-						ContainerNumSlots = C_Container.GetContainerNumSlots(bag)
-					end
-					for slot = 1, ContainerNumSlots do
+					local containerNumSlots = GetContainerNumSlotsSafe(bag)
+					for slot = 1, containerNumSlots do
 						local count2, link2
 						if Postal.WOWBCClassic then
 							count2 = select(2, GetContainerItemInfo(bag, slot))
 							link2 = select(7, GetContainerItemInfo(bag, slot))
 						else
-							if C_Container and C_Container.GetContainerItemInfo(bag, slot) then
-								local itemInfo = C_Container.GetContainerItemInfo(bag, slot)
+							if GetContainerItemInfoSafe and GetContainerItemInfoSafe(bag, slot) then
+								local itemInfo = GetContainerItemInfoSafe(bag, slot)
 								count2 = itemInfo.stackCount
 								link2 = itemInfo.hyperlink
 							else
@@ -392,7 +389,8 @@ function Postal_OpenAll:ProcessNext()
 	end
 end
 
-function Postal_OpenAll:Reset(event)
+function Postal_OpenAll:Reset(event, ...)
+	local paneType = ...
 	refreshFrame:Hide()
 	updateFrame:Hide()
 	self:UnregisterEvent("UI_ERROR_MESSAGE")

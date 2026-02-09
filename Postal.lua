@@ -286,6 +286,12 @@ function Postal.ProfileFunc(dropdownbutton, arg1, arg2, checked)
 	CloseDropDownMenus()
 end
 
+local guildPopup = StaticPopupDialogs["SET_GUILDPLAYERNOTE"] or {}
+local function DefaultPopupEscape(self)
+	local parent = self:GetParent()
+	if parent then parent:Hide() end
+end
+
 StaticPopupDialogs["POSTAL_NEW_PROFILE"] = {
 	text = L["New Profile Name:"],
 	button1 = ACCEPT,
@@ -300,13 +306,13 @@ StaticPopupDialogs["POSTAL_NEW_PROFILE"] = {
 		StaticPopup1EditBox:SetText(Postal.db:GetCurrentProfile())
 		StaticPopup1EditBox:SetFocus()
 	end,
-	OnHide = StaticPopupDialogs["SET_GUILDPLAYERNOTE"].OnHide,
+	OnHide = guildPopup.OnHide or function() end,
 	EditBoxOnEnterPressed = function(self)
 		local parent = self:GetParent()
 		Postal.db:SetProfile(strtrim(StaticPopup1EditBox:GetText()))
 		parent:Hide()
 	end,
-	EditBoxOnEscapePressed = StaticPopupDialogs["SET_GUILDPLAYERNOTE"].EditBoxOnEscapePressed,
+	EditBoxOnEscapePressed = guildPopup.EditBoxOnEscapePressed or DefaultPopupEscape,
 	timeout = 0,
 	exclusive = 1,
 	whileDead = 1,

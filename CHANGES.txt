@@ -1,4 +1,13 @@
 ------------------------------------------------------------------------
+r665 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 4 lines
+Changed paths:
+   M /trunk/Modules/OpenAll.lua
+   M /trunk/Modules/QuickAttach.lua
+   M /trunk/Postal.lua
+   M /trunk/Postal_TBC.toc
+
+Fix OpenAll reset handler, add Classic-safe container fallbacks, cache item info in QuickAttach, and guard popup fallbacks.
+------------------------------------------------------------------------
 r664 | Jim | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 3 lines
 Changed paths:
    M /trunk/Postal_TBC.toc
