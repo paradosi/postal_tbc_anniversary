@@ -1,6 +1,8 @@
 # Postal (TBC Anniversary)
 
-Enhanced mailbox features for World of Warcraft TBC Classic (Anniversary).
+![Postal Icon](mailicon.tga)
+
+Enhanced mailbox tools for World of Warcraft TBC Classic Anniversary.
 
 ## Features
 - Open all mail quickly
@@ -13,13 +15,18 @@ Enhanced mailbox features for World of Warcraft TBC Classic (Anniversary).
    `World of Warcraft\_anniversary_\Interface\AddOns`
 3. In-game: Character Select → `AddOns` → enable `Postal`.
 
-## Supported client
+## Supported Client
 - TBC Anniversary 2.5.5 (`Interface: 20505`)
 
+## Configuration
+- Open any mailbox.
+- Click the Postal menu button near the mailbox frame.
+- Toggle modules and options from the dropdown menu.
+
 ## Development
-- Source lives in `Postal` folder root.
-- Modules are in `Modules\`.
-- Localization is in `Localization.lua`.
+- Core: `Postal.lua`
+- Modules: `Modules\`
+- Localization: `Localization.lua`
 
 ## License
 MIT. See `LICENSE.txt`.
