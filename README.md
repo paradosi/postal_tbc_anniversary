@@ -1,6 +1,6 @@
 # Postal (TBC Anniversary)
 
-![Postal Icon](mailicon.tga)
+![Postal Icon](mailicon.png)
 
 Enhanced mailbox tools for World of Warcraft TBC Classic Anniversary.
 
