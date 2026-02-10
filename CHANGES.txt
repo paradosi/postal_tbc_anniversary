@@ -1,4 +1,10 @@
 ------------------------------------------------------------------------
+r668 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 1 line
+Changed paths:
+   M /trunk/Postal_TBC.toc
+
+Remove leading "v" from TBC version metadata to avoid "vv" display.
+------------------------------------------------------------------------
 r667 | paradosi | 2026-02-09 00:00:00 +0000 (Mon, 09 Feb 2026) | 4 lines
 Changed paths:
    M /trunk/Postal.lua

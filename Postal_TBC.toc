@@ -1,13 +1,13 @@
 ## Interface: 20505
 ## Title: Postal
-## Version: v4.3.8
-## X-Build: 667
+## Version: 4.3.8
+## X-Build: 668
 ## X-ReleaseDate: 2026-02-09T00:00:00Z
-## X-Revision: 667
+## X-Revision: 668
 ## Author: paradosi@Dreamscythe
 ## X-Credits: Ammo, Rabbit, Grennon, Mikk, oscarucb, Jonny aka The_Original_Manbot
 ## X-Category: Mail
-## IconTexture: Interface\\AddOns\\Postal\\mailicon
+## IconTexture: Interface\AddOns\Postal\mailicon.tga
 ## Notes: Postal: Enhanced Mailbox support
 ## Notes-ruRU: Postal: Расширенная поддержка почтового ящика
 ## Notes-frFR: Postal: améliorations diverses de l'interface d'envoi/réception de courriers.
